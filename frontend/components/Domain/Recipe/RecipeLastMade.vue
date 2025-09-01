@@ -148,7 +148,7 @@ const newTimelineEventImageName = ref<string>("");
 const newTimelineEventImagePreviewUrl = ref<string>();
 const newTimelineEventTimestamp = ref<Date>(new Date());
 const newTimelineEventTimestampString = computed(() => {
-  return newTimelineEventTimestamp.value.toISOString().substring(0, 10);
+  return newTimelineEventTimestamp.value.toLocaleDateString(i18n.locale.value);
 });
 
 const lastMade = ref(props.recipe.lastMade);
@@ -220,7 +220,9 @@ async function createTimelineEvent() {
 
   // the user only selects the date, so we set the time to end of day local time
   // we choose the end of day so it always comes after "new recipe" events
-  newTimelineEvent.value.timestamp = new Date(newTimelineEventTimestampString.value + "T23:59:59").toISOString();
+  const selectedDate = new Date(newTimelineEventTimestamp.value);
+  selectedDate.setHours(23, 59, 59, 999);
+  newTimelineEvent.value.timestamp = selectedDate.toISOString();
 
   let newEvent: RecipeTimelineEventOut | null = null;
   try {
